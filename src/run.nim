@@ -44,6 +44,8 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
 
   let env = newStringTable({
     "PATH": os.getEnv("PATH") & fmt":{binDirPath}",
+    "npm_package_json": packageJsonPath,
+    "npm_execpath": getAppDir() & getAppFilename(),
   })
 
   case options.pmCommand:
