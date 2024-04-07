@@ -1,5 +1,5 @@
 import system
-import std/[os, osproc, strtabs, tables, paths, strformat, exitprocs, strutils]
+import std/[os, osproc, strtabs, tables, paths, strformat, exitprocs, strutils, terminal]
 
 import args
 import pkg
@@ -9,6 +9,8 @@ type
     Npm, Yarn, Pnpm, Bun
 
 proc exec(command: string, env: StringTableRef, workingDir: string) =
+  styledEcho styleBright, "$ ", styleDim, command , resetStyle, "\n"
+
   let process = startProcess(
     command,
     env = env,
