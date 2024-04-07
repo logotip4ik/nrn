@@ -25,13 +25,14 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
 
   case options.pmCommand:
     of PmCommand.Run:
-      if options.runCommand in scripts:
-        let env = {
-          "PATH": os.getEnv("PATH") & fmt":{binDirPath}"
-        }.newStringTable()
+      let env = newStringTable({
+        "PATH": os.getEnv("PATH") & fmt":{binDirPath}"
+      })
 
-        exec(scripts[options.runCommand], env, file.dir.string)
-      discard
+      if options.runCommand in scripts:
+        exec(scripts[options.runCommand] & options.forwarded, env, file.dir.string)
+      elif os.fileExists(fmt"{binDirPath}/{options.runCommand}"):
+        exec(options.runCommand & options.forwarded, env, file.dir.string)
     else:
       discard
 
