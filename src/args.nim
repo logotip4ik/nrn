@@ -17,28 +17,30 @@ proc getOptions*(): Options =
   var pmCommands = PmCommand.toSeq().mapIt($it)
 
   var checkedPmCommand = false
-  var forwarding = false
   for kind, key, val in argv.getopt():
     case kind:
       of CmdLineKind.cmdArgument:
         defer: checkedPmCommand = true
 
         if not checkedPmCommand:
-          if pmCommands.contains(key): result.pmCommand = parseEnum[PmCommand](key)
-          else: result.runCommand = key
-        elif forwarding:
+          if pmCommands.contains(key):
+            result.pmCommand = parseEnum[PmCommand](key)
+          else:
+            result.runCommand = key
+        elif checkedPmCommand:
           result.forwarded.add(fmt" {key}")
 
       of CmdLineKind.cmdLongOption:
-        if forwarding == true:
-          result.forwarded.add(fmt" --{key}={val}")
-
-        if key.isEmptyOrWhitespace():
-          forwarding = true
+        if checkedPmCommand:
+          result.forwarded.add(
+            if not val.isEmptyOrWhitespace(): fmt" --{key}={val}" else: fmt" --{key}"
+          )
 
       of CmdLineKind.cmdShortOption:
-        if forwarding == true:
-          result.forwarded.add(fmt" -{key}={val}")
+        if checkedPmCommand:
+          result.forwarded.add(
+            if not val.isEmptyOrWhitespace(): fmt" -{key}={val}" else: fmt" -{key}"
+          )
 
       of CmdLineKind.cmdEnd:
         break
