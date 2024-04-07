@@ -15,20 +15,20 @@ from my [Keycap](https://github.com/logotip4ik/keycap) project and added `bench`
 $ hyperfine --warmup 5 'nrn bench' 'nrr bench' 'yarn bench'
 
 Benchmark 1: nrn bench
-  Time (mean ± σ):     251.1 ms ±   3.0 ms    [User: 245.4 ms, System: 33.4 ms]
-  Range (min … max):   246.4 ms … 255.9 ms    11 runs
+  Time (mean ± σ):     252.6 ms ±   3.9 ms    [User: 250.5 ms, System: 32.9 ms]
+  Range (min … max):   246.7 ms … 257.4 ms    11 runs
  
 Benchmark 2: nrr bench
-  Time (mean ± σ):     252.8 ms ±   2.0 ms    [User: 252.4 ms, System: 32.2 ms]
-  Range (min … max):   250.5 ms … 256.6 ms    11 runs
+  Time (mean ± σ):     252.5 ms ±   4.0 ms    [User: 253.1 ms, System: 30.4 ms]
+  Range (min … max):   245.8 ms … 260.0 ms    11 runs
  
 Benchmark 3: yarn bench
-  Time (mean ± σ):     881.8 ms ±   9.6 ms    [User: 1035.9 ms, System: 106.3 ms]
-  Range (min … max):   866.3 ms … 897.2 ms    10 runs
+  Time (mean ± σ):     885.5 ms ±   6.9 ms    [User: 1040.5 ms, System: 110.8 ms]
+  Range (min … max):   876.7 ms … 895.1 ms    10 runs
  
 Summary
-  nrn bench ran
-    1.01 ± 0.01 times faster than nrr bench
+  nrr bench ran
+    1.00 ± 0.02 times faster than nrn bench
     3.51 ± 0.06 times faster than yarn bench
 ```
 
