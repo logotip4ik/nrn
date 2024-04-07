@@ -42,14 +42,14 @@ proc checkPm(root: string): PM =
 proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPath: string) =
   let packageJsonFile = paths.splitFile(Path(packageJsonPath))
 
-  let env = newStringTable({
-    "PATH": os.getEnv("PATH") & fmt":{binDirPath}",
-    "npm_package_json": packageJsonPath,
-    "npm_execpath": getAppDir() & getAppFilename(),
-  })
-
   case options.pmCommand:
     of PmCommand.Run:
+      let env = newStringTable({
+        "PATH": os.getEnv("PATH") & fmt":{binDirPath}",
+        "npm_package_json": packageJsonPath,
+        "npm_execpath": getAppDir() & getAppFilename(),
+      })
+
       if options.runCommand in scripts:
         exec(
           scripts[options.runCommand] & options.forwarded,
@@ -65,6 +65,9 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
 
     of PmCommand.Install:
       let pm = checkPm(packageJsonFile.dir.string)
+      let env = newStringTable({
+        "PATH": os.getEnv("PATH"),
+      })
 
       case pm:
         of PM.Npm:
@@ -78,6 +81,9 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
 
     of PmCommand.Add:
       let pm = checkPm(packageJsonFile.dir.string)
+      let env = newStringTable({
+        "PATH": os.getEnv("PATH"),
+      })
 
       case pm:
         of PM.Npm:
@@ -92,6 +98,9 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
 
     of PmCommand.Remove:
       let pm = checkPm(packageJsonFile.dir.string)
+      let env = newStringTable({
+        "PATH": os.getEnv("PATH"),
+      })
 
       case pm:
         of PM.Npm:
