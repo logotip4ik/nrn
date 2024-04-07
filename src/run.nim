@@ -8,7 +8,7 @@ proc exec(command: string, env: StringTableRef, workingDir: string) =
   let process = startProcess(
     command,
     env = env,
-    options = {poEvalCommand, poParentStreams},
+    options = {poEvalCommand, poParentStreams, poInteractive, poDaemon},
     workingDir = workingDir,
   )
 
@@ -26,13 +26,21 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
   case options.pmCommand:
     of PmCommand.Run:
       let env = newStringTable({
-        "PATH": os.getEnv("PATH") & fmt":{binDirPath}"
+        "PATH": os.getEnv("PATH") & fmt":{binDirPath}",
       })
 
       if options.runCommand in scripts:
-        exec(scripts[options.runCommand] & options.forwarded, env, file.dir.string)
+        exec(
+          scripts[options.runCommand] & options.forwarded,
+          env,
+          file.dir.string
+        )
       elif os.fileExists(fmt"{binDirPath}/{options.runCommand}"):
-        exec(options.runCommand & options.forwarded, env, file.dir.string)
+        exec(
+          options.runCommand & options.forwarded,
+          env,
+          file.dir.string
+        )
     else:
       discard
 
