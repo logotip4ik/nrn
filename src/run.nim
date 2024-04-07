@@ -85,6 +85,17 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
         of PM.Bun:
           let forwarded = options.forwarded.replaceWord("-D", "-d")
           exec("bun install" & forwarded, env, packageJsonFile.dir.string)
-    else:
-      discard
+
+    of PmCommand.Remove:
+      let pm = checkPm(packageJsonFile.dir.string)
+
+      case pm:
+        of PM.Npm:
+          exec("npm remove" & options.forwarded, env, packageJsonFile.dir.string)
+        of PM.Yarn:
+          exec("yarn remove" & options.forwarded, env, packageJsonFile.dir.string)
+        of PM.Pnpm:
+          exec("pnpm remove" & options.forwarded, env, packageJsonFile.dir.string)
+        of PM.Bun:
+          exec("bun remove" & options.forwarded, env, packageJsonFile.dir.string)
 
