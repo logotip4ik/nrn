@@ -9,8 +9,12 @@ when isMainModule:
   let packageJsonPath = pkg.findFile("package.json")
   let nodeModulesPath = pkg.findFolder("node_modules")
 
-  if packageJsonPath.isNone or nodeModulesPath.isNone:
+  if packageJsonPath.isNone:
     echo "no package.json found in tree"
+    system.quit()
+
+  if nodeModulesPath.isNone:
+    echo "no node_modules found in tree"
     system.quit()
 
   let packageJsonString = readFile(packageJsonPath.get())
