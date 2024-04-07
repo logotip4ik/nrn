@@ -1,5 +1,5 @@
 import system
-import std/[os, osproc, strtabs, tables, paths, strformat, exitprocs]
+import std/[os, osproc, strtabs, tables, paths, strformat, exitprocs, strutils]
 
 import args
 import pkg
@@ -58,6 +58,7 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
           env,
           packageJsonFile.dir.string
         )
+
     of PmCommand.Install:
       let pm = checkPm(packageJsonFile.dir.string)
 
@@ -70,6 +71,20 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
           exec("pnpm install", env, packageJsonFile.dir.string)
         of PM.Bun:
           exec("bun install", env, packageJsonFile.dir.string)
+
+    of PmCommand.Add:
+      let pm = checkPm(packageJsonFile.dir.string)
+
+      case pm:
+        of PM.Npm:
+          exec("npm install" & options.forwarded, env, packageJsonFile.dir.string)
+        of PM.Yarn:
+          exec("yarn add" & options.forwarded, env, packageJsonFile.dir.string)
+        of PM.Pnpm:
+          exec("pnpm install" & options.forwarded, env, packageJsonFile.dir.string)
+        of PM.Bun:
+          let forwarded = options.forwarded.replaceWord("-D", "-d")
+          exec("bun install" & forwarded, env, packageJsonFile.dir.string)
     else:
       discard
 
