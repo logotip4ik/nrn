@@ -9,7 +9,7 @@ type
     Npm, Yarn, Pnpm, Bun
 
 proc exec(command: string, env: StringTableRef, workingDir: string) =
-  styledEcho styleBright, "$ ", styleDim, command , resetStyle, "\n"
+  styledEcho styleBright, "$ ", resetStyle, styleDim, command, resetStyle, "\n"
 
   let process = startProcess(
     command,
@@ -44,11 +44,14 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
 
   case options.pmCommand:
     of PmCommand.Run:
-      let env = newStringTable({
-        "PATH": os.getEnv("PATH") & fmt":{binDirPath}",
-        "npm_package_json": packageJsonPath,
-        "npm_execpath": getAppDir() & getAppFilename(),
-      })
+      var env = newStringTable()
+
+      for key, value in envPairs():
+        env[key] = value
+
+      env["PATH"] = os.getEnv("PATH") & fmt":{binDirPath}"
+      env["npm_package_json"] = packageJsonPath
+      env["npm_execpath"] = getAppDir() & getAppFilename()
 
       if options.runCommand in scripts:
         exec(
@@ -62,6 +65,8 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
           env,
           packageJsonFile.dir.string
         )
+      else:
+        styledEcho styleDim, "command not found: ", resetStyle, styleBright, options.runCommand, resetStyle
 
     of PmCommand.Install:
       let pm = checkPm(packageJsonFile.dir.string)
