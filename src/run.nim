@@ -42,13 +42,12 @@ proc checkPm(root: string): PM =
 proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPath: string) =
   let packageJsonFile = paths.splitFile(Path(packageJsonPath))
 
+  var env = newStringTable()
+  for key, value in envPairs():
+    env[key] = value
+
   case options.pmCommand:
     of PmCommand.Run:
-      var env = newStringTable()
-
-      for key, value in envPairs():
-        env[key] = value
-
       env["PATH"] = os.getEnv("PATH") & fmt":{binDirPath}"
       env["npm_package_json"] = packageJsonPath
       env["npm_execpath"] = getAppDir() & getAppFilename()
@@ -69,12 +68,7 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
         styledEcho styleDim, "command not found: ", resetStyle, styleBright, options.runCommand, resetStyle
 
     of PmCommand.Install:
-      let pm = checkPm(packageJsonFile.dir.string)
-      let env = newStringTable({
-        "PATH": os.getEnv("PATH"),
-      })
-
-      case pm:
+      case checkPm(packageJsonFile.dir.string):
         of PM.Npm:
           exec("npm install", env, packageJsonFile.dir.string)
         of PM.Yarn:
@@ -85,12 +79,7 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
           exec("bun install", env, packageJsonFile.dir.string)
 
     of PmCommand.Add:
-      let pm = checkPm(packageJsonFile.dir.string)
-      let env = newStringTable({
-        "PATH": os.getEnv("PATH"),
-      })
-
-      case pm:
+      case checkPm(packageJsonFile.dir.string):
         of PM.Npm:
           exec("npm install" & options.forwarded, env, packageJsonFile.dir.string)
         of PM.Yarn:
@@ -102,12 +91,7 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
           exec("bun install" & forwarded, env, packageJsonFile.dir.string)
 
     of PmCommand.Remove:
-      let pm = checkPm(packageJsonFile.dir.string)
-      let env = newStringTable({
-        "PATH": os.getEnv("PATH"),
-      })
-
-      case pm:
+      case checkPm(packageJsonFile.dir.string):
         of PM.Npm:
           exec("npm remove" & options.forwarded, env, packageJsonFile.dir.string)
         of PM.Yarn:
