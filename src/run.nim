@@ -29,11 +29,11 @@ proc exec(command: string, env: StringTableRef, workingDir: string) =
 proc checkPm(root: string): PM =
   if os.fileExists(fmt"{root}/package-lock.json"):
     return PM.Npm
-  if os.fileExists(fmt"{root}/yarn.lock"):
+  if os.fileExists(fmt"{root}/yarn.lock") or os.fileExists(fmt"{root}/.yarnrc") or os.fileExists(fmt"{root}/.yarnrc.yml"):
     return PM.Yarn
   if os.fileExists(fmt"{root}/pnpm-lock.yaml"):
     return PM.Pnpm
-  if os.fileExists(fmt"{root}/bun.lockb"):
+  if os.fileExists(fmt"{root}/bun.lockb") or os.fileExists(fmt"{root}/bunfig.toml"):
     return PM.Yarn
 
   echo "Didn't found package manager, fallbacking to Yarn"
