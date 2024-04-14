@@ -6,6 +6,7 @@ type
     Add = "add"
     Install = "install"
     Remove = "remove"
+    Help = "help"
   Options* = object
     # rely on nim to set pmCommand to first value in PmCommand enum as default
     pmCommand*: PmCommand
@@ -42,12 +43,21 @@ proc getOptions*(): Options =
           result.forwarded.add(
             if not val.isEmptyOrWhitespace(): fmt" --{key}={val}" else: fmt" --{key}"
           )
+        elif key == "help":
+          result.pmCommand = PmCommand.Help
+          break
 
       of CmdLineKind.cmdShortOption:
         if checkedPmCommand:
           result.forwarded.add(
             if not val.isEmptyOrWhitespace(): fmt" -{key}={val}" else: fmt" -{key}"
           )
+        elif key == "h":
+          result.pmCommand = PmCommand.Help
+          break
 
       of CmdLineKind.cmdEnd:
         break
+
+  if not checkedPmCommand:
+    result.pmCommand = PmCommand.Help

@@ -100,4 +100,18 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
           exec("pnpm remove" & options.forwarded, env, packageJsonFile.dir.string)
         of PM.Bun:
           exec("bun remove" & options.forwarded, env, packageJsonFile.dir.string)
+    else:
+      discard
 
+proc printHelp*() =
+  echo "Fast cross package manager scripts runner and more\n"
+  styledEcho styleBright, styleUnderscore, "Usage:", resetStyle, styleBright, " nrn", resetStyle, " [OPTIONS] [command] [...script options]\n"
+  styledEcho styleBright, styleUnderscore, "Arguments:"
+  styledEcho "  [command] - package manager command (insatll, add, remove, run) or script to run. You can skip this as shorthand to ", styleBright, styleUnderscore, "run\n"
+  styledEcho styleBright, styleUnderscore, "Options:"
+  styledEcho styleBright, "  -h, --help", resetStyle, " - print this message\n"
+  styledEcho styleBright, styleUnderscore, "Example:"
+  styledEcho styleBright, "  nrn i", resetStyle, " - install dependencies with your package manager"
+  styledEcho styleBright, "  nrn add yarn", resetStyle, " - install ", styleBright, "yarn", resetStyle, " at closest package.json"
+  styledEcho styleBright, "  nrn rm pnpm", resetStyle, " - remove ", styleBright, "pnpm", resetStyle, " from closest package.json"
+  styledEcho styleBright, "  nrn dev", resetStyle, " - run ", styleBright, "dev", resetStyle, " command from your package.json"

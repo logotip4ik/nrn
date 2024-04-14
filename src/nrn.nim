@@ -6,6 +6,12 @@ import pkg
 import run
 
 when isMainModule:
+  let nrnOptions = args.getOptions()
+
+  if nrnOptions.pmCommand == PmCommand.Help:
+    run.printHelp()
+    system.quit()
+
   let packageJsonPath = pkg.findFile("package.json")
   let nodeModulesPath = pkg.findFolder("node_modules")
 
@@ -19,8 +25,6 @@ when isMainModule:
 
   let packageJsonString = readFile(packageJsonPath.get())
   let scripts = pkg.parseScriptsFromPackageJson(packageJsonString)
-
-  let nrnOptions = args.getOptions()
 
   run.run(
     nrnOptions,
