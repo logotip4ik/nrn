@@ -39,12 +39,15 @@ proc checkPm(root: string): PM =
   echo "Didn't found package manager, fallbacking to Yarn"
   return PM.Yarn
 
-proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPath: string) =
+# returns true if had run at least one command
+proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPath: string): bool =
   let packageJsonFile = paths.splitFile(Path(packageJsonPath))
 
   var env = newStringTable()
   for key, value in envPairs():
     env[key] = value
+
+  result = true
 
   case options.pmCommand:
     of PmCommand.Run:
@@ -65,6 +68,7 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
           packageJsonFile.dir.string
         )
       else:
+        result = false
         styledEcho styleDim, "command not found: ", resetStyle, styleBright, options.runCommand, resetStyle
 
     of PmCommand.Install:
@@ -101,7 +105,7 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
         of PM.Bun:
           exec("bun remove" & options.forwarded, env, packageJsonFile.dir.string)
     else:
-      discard
+      result = false
 
 proc printHelp*() =
   echo "Fast cross package manager scripts runner and more\n"
