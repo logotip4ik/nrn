@@ -14,7 +14,7 @@ proc exec(command: string, env: StringTableRef, workingDir: string) =
   let process = startProcess(
     command,
     env = env,
-    options = {poEvalCommand, poParentStreams, poInteractive, poDaemon},
+    options = {poEvalCommand, poParentStreams, poInteractive},
     workingDir = workingDir,
   )
 
