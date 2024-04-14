@@ -1,4 +1,4 @@
-import std/[parseopt, cmdline, sequtils, strutils, strformat]
+import std/[parseopt, cmdline, sequtils, strutils, strformat, tables]
 
 type
   PmCommand* {.pure.} = enum
@@ -11,6 +11,11 @@ type
     pmCommand*: PmCommand
     runCommand*: string
     forwarded*: string
+
+const pmCommandAliases = {
+  "i": PmCommand.Install,
+  "rm": PmCommand.Remove,
+}.toTable()
 
 proc getOptions*(): Options =
   var argv = initOptParser(commandLineParams())
@@ -25,6 +30,8 @@ proc getOptions*(): Options =
         if not checkedPmCommand:
           if pmCommands.contains(key):
             result.pmCommand = parseEnum[PmCommand](key)
+          elif key in pmCommandAliases:
+            result.pmCommand = pmCommandAliases[key]
           else:
             result.runCommand = key
         elif checkedPmCommand:
