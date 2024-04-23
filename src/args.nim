@@ -12,6 +12,7 @@ type
     pmCommand*: PmCommand
     runCommand*: string
     forwarded*: string
+    isScriptsCommand*: bool
 
 const pmCommandAliases = {
   "i": PmCommand.Install,

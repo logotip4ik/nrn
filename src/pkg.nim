@@ -1,29 +1,29 @@
-import std/[os, sequtils, strformat, tables, json, options]
+import std/[os, sequtils, strformat, tables, json]
 
 type
   Scripts* = Table[string, string]
 
-proc findFile*(filename: string): Option[string] =
+proc findFile*(filename: string, findOne = true): seq[string] =
   var path = os.getCurrentDir()
 
-  for dir in path.parentDirs().toSeq()[0..2]:
+  for dir in path.parentDirs().toSeq():
     let filePath = fmt"{dir}/{filename}"
 
     if os.fileExists(filePath):
-      return some(filePath)
+      result.add(filePath)
 
-  return none(string)
+      if findOne: break
 
-proc findFolder*(folder: string): Option[string] =
+proc findFolder*(folder: string, findOne = true): seq[string] =
   var path = os.getCurrentDir()
 
   for dir in path.parentDirs().toSeq()[0..2]:
     let dirPath = fmt"{dir}/{folder}"
 
     if os.dirExists(dirPath):
-      return some(dirPath)
+      result.add(dirPath)
 
-  return none(string)
+      if findOne: break
 
 proc parseScriptsFromPackageJson*(jsonString: string): Scripts =
   let packageJson = json.parseJson(jsonString)

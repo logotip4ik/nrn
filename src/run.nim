@@ -40,14 +40,17 @@ proc checkPm(root: string): PM =
   return PM.Npm
 
 # returns true if had run at least one command
-proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPath: string): bool =
+proc run*(
+  options: args.Options,
+  scripts: pkg.Scripts,
+  packageJsonPath,
+  binDirPath: string,
+) =
   let packageJsonFile = paths.splitFile(Path(packageJsonPath))
 
   var env = newStringTable()
   for key, value in envPairs():
     env[key] = value
-
-  result = true
 
   case options.pmCommand:
     of PmCommand.Run:
@@ -55,21 +58,18 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
       env["npm_package_json"] = packageJsonPath
       env["npm_execpath"] = getAppDir() & getAppFilename()
 
-      if options.runCommand in scripts:
+      if options.isScriptsCommand:
         exec(
           scripts[options.runCommand] & options.forwarded,
           env,
           packageJsonFile.dir.string
         )
-      elif os.fileExists(fmt"{binDirPath}/{options.runCommand}"):
+      else:
         exec(
           options.runCommand & options.forwarded,
           env,
           packageJsonFile.dir.string
         )
-      else:
-        result = false
-        styledEcho styleDim, "command not found: ", resetStyle, styleBright, options.runCommand, resetStyle
 
     of PmCommand.Install:
       case checkPm(packageJsonFile.dir.string):
@@ -105,7 +105,7 @@ proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPa
         of PM.Bun:
           exec("bun remove" & options.forwarded, env, packageJsonFile.dir.string)
     else:
-      result = false
+      discard
 
 proc printHelp*() =
   echo "Fast cross package manager scripts runner and more\n"
