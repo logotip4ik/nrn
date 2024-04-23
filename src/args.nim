@@ -15,6 +15,7 @@ type
 
 const pmCommandAliases = {
   "i": PmCommand.Install,
+  "r": PmCommand.Remove,
   "rm": PmCommand.Remove,
 }.toTable()
 
