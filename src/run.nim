@@ -36,8 +36,8 @@ proc checkPm(root: string): PM =
   if os.fileExists(fmt"{root}/bun.lockb") or os.fileExists(fmt"{root}/bunfig.toml"):
     return PM.Yarn
 
-  echo "Didn't found package manager, fallbacking to Yarn"
-  return PM.Yarn
+  echo "Didn't found package manager, fallbacking to Npm"
+  return PM.Npm
 
 # returns true if had run at least one command
 proc run*(options: args.Options, scripts: pkg.Scripts, packageJsonPath, binDirPath: string): bool =
