@@ -13,25 +13,12 @@ when isMainModule:
     run.printHelp()
     system.quit()
 
-  let packageJsonPaths = pkg.findFile("package.json", nrnOptions.pmCommand != PmCommand.Run)
-  let nodeModulesPaths = pkg.findFolder("node_modules", nrnOptions.pmCommand != PmCommand.Run)
-
-  if packageJsonPaths.len == 0:
-    echo "no package.json found in tree"
-    system.quit()
-
-  if nodeModulesPaths.len == 0 and nrnOptions.pmCommand != PmCommand.Install:
-    echo "no node_modules found in tree"
-    system.quit()
-
+  let walk = pkg.walkUpPackages(nrnOptions.pmCommand == PmCommand.Run)
   var root: tuple[pkg: string, nm: string];
   var scripts: Scripts;
 
   if nrnOptions.pmCommand == PmCommand.Run:
-    for i in countup(0, min(packageJsonPaths.len, nodeModulesPaths.len) - 1):
-      let packageJsonPath = packageJsonPaths[i]
-      let nodeModulesPath = nodeModulesPaths[i]
-
+    for packageJsonPath, nodeModulesPath in walk():
       scripts = pkg.parseScriptsFromPackageJson(readFile(packageJsonPath))
 
       if nrnOptions.runCommand in scripts:
@@ -51,14 +38,15 @@ when isMainModule:
         .sortedByIt(it[1])
         .reversed()
 
-      echo "Did you mean?:"
+      styledEcho styleBright, "\nDid you mean?:"
       for i in countup(0, 2):
         if i < scripts.len:
-          echo " - ", maybeScipts[i][0]
+          styledEcho " - ", styleItalic, maybeScipts[i][0]
 
       system.quit()
   else:
-    root = (packageJsonPaths[0], nodeModulesPaths[0])
+    let next = walk()
+    root = (next.packageJson, next.nodeModules);
 
   run.run(
     nrnOptions,
