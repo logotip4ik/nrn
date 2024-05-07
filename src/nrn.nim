@@ -18,6 +18,8 @@ when isMainModule:
   var scripts: Scripts;
 
   if nrnOptions.pmCommand == PmCommand.Run:
+    var availableScripts: seq[string] = @[];
+
     for packageJsonPath, nodeModulesPath in walk():
       scripts = pkg.parseScriptsFromPackageJson(readFile(packageJsonPath))
 
@@ -28,12 +30,12 @@ when isMainModule:
       elif os.fileExists(fmt"{nodeModulesPath}/.bin/{nrnOptions.runCommand}"):
         root = (packageJsonPath, nodeModulesPath)
         break
+      else:
+        availableScripts = availableScripts.concat(scripts.keys().toSeq())
 
     if root.pkg.len == 0:
       styledEcho styleDim, "command not found: ", resetStyle, styleBright, nrnOptions.runCommand, resetStyle
-      let maybeScipts = scripts
-        .keys()
-        .toSeq()
+      let maybeScipts = availableScripts
         .map((it: string) => (it, suggest.fuzzyMatch(it, nrnOptions.runCommand)))
         .sortedByIt(it[1])
         .reversed()
