@@ -1,5 +1,5 @@
 import system
-import std/[os, strformat, tables, sequtils, sugar, algorithm, terminal]
+import std/[os, strformat, tables, sequtils, algorithm, terminal]
 
 import args
 import pkg
@@ -36,7 +36,7 @@ when isMainModule:
     if root.pkg.len == 0:
       styledEcho styleDim, "command not found: ", resetStyle, styleBright, nrnOptions.runCommand, resetStyle
       let maybeScipts = availableScripts
-        .map((it: string) => (it, suggest.fuzzyMatch(it, nrnOptions.runCommand)))
+        .mapIt((it, suggest.fuzzyMatch(it, nrnOptions.runCommand)))
         .sortedByIt(it[1])
         .reversed()
 
