@@ -1,10 +1,10 @@
 import std/[os, sequtils, strformat, tables, json]
 
 type
-  Scripts* = Table[string, string]
+  Scripts* = ref Table[string, string]
 
 proc walkUpPackages*(checkNodeModules = false): iterator(): tuple[packageJson: string, nodeModules: string] =
-  return iterator(): tuple[packageJson: string, nodeModules: string] =
+  return iterator(): tuple[packageJson: string, nodeModules: string] {.inline.} =
     var path = os.getCurrentDir()
 
     for dir in path.parentDirs().toSeq():
