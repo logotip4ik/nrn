@@ -6,27 +6,28 @@ I tried [`nrr`](https://github.com/ryanccn/nrr), it's fast, cool and maintained,
 ## benchmarks
 
 Just for fun, i didn't expect to be on par with rust, using nim, but it's cool how high you can jump with this little language. I used decent sized package.json file
-from my [Keycap](https://github.com/logotip4ik/keycap) project and added `bench` script with `nuxt help;exit 0`.
+from my [Keycap](https://github.com/logotip4ik/keycap) project and added `test` script with `nuxt help;exit 0`.
 
+
+<small>Mac M3 pro</small>
 
 ```sh
-$ hyperfine --warmup 5 'nrn bench' 'nrr bench' 'yarn bench'
+$ hyperfine --warmup 5 'nrn test' 'nrr test' 'yarn test'
 
-Benchmark 1: nrn bench
-  Time (mean ± σ):     250.5 ms ±   3.8 ms    [User: 254.9 ms, System: 29.7 ms]
-  Range (min … max):   243.6 ms … 256.2 ms    11 runs
+Benchmark 1: nrn test
+  Time (mean ± σ):     199.2 ms ±   0.6 ms    [User: 185.1 ms, System: 22.5 ms]
+  Range (min … max):   198.5 ms … 200.3 ms    15 runs
  
-Benchmark 2: nrr bench
-  Time (mean ± σ):     251.7 ms ±   2.4 ms    [User: 255.2 ms, System: 29.9 ms]
-  Range (min … max):   249.0 ms … 257.0 ms    11 runs
+Benchmark 2: ./nrr test
+  Time (mean ± σ):     139.6 ms ±   0.7 ms    [User: 138.1 ms, System: 14.5 ms]
+  Range (min … max):   138.3 ms … 140.8 ms    21 runs
  
-Benchmark 3: yarn bench
-  Time (mean ± σ):     879.6 ms ±   8.2 ms    [User: 1039.4 ms, System: 105.0 ms]
-  Range (min … max):   870.1 ms … 896.1 ms    10 runs
+Benchmark 3: yarn test
+  Time (mean ± σ):     493.5 ms ±   5.7 ms    [User: 513.1 ms, System: 47.7 ms]
+  Range (min … max):   483.3 ms … 504.6 ms    10 runs
  
 Summary
-  nrn bench ran
-    1.01 ± 0.02 times faster than nrr bench
-    3.51 ± 0.06 times faster than yarn bench
+  ./nrr test ran
+    1.43 ± 0.01 times faster than nrn test
+    3.54 ± 0.04 times faster than yarn test
 ```
-
