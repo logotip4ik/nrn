@@ -1,7 +1,10 @@
-import std/[os, sequtils, strformat, tables, json]
+import std/[os, sequtils, strformat, tables]
+import jsony
 
 type
-  Scripts* = ref Table[string, string]
+  Scripts* = Table[string, string]
+  Package = object
+    scripts: Scripts
 
 proc walkUpPackages*(checkNodeModules = false): iterator(): tuple[packageJson: string, nodeModules: string] =
   return iterator(): tuple[packageJson: string, nodeModules: string] {.inline.} =
@@ -18,5 +21,5 @@ proc walkUpPackages*(checkNodeModules = false): iterator(): tuple[packageJson: s
         yield (packageJson, nodeModules)
 
 proc parseScriptsFromPackageJson*(jsonString: string): Scripts =
-  let packageJson = json.parseJson(jsonString)
-  result = json.to(packageJson["scripts"], Scripts)
+  let package = jsonString.fromJson(Package)
+  result = package.scripts

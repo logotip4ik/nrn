@@ -11,3 +11,4 @@ bin           = @["nrn"]
 # Dependencies
 
 requires "nim >= 2.0.2"
+requires "jsony#head"
