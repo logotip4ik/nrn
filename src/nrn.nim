@@ -23,6 +23,7 @@ when isMainModule:
     for packageJsonPath, nodeModulesPath in walk():
       scripts = pkg.parseScriptsFromPackageJson(readFile(packageJsonPath))
 
+      # TODO: in monorepo, this can cause issues, where some dependency is hoisted to the top node_modules.
       if nrnOptions.runCommand in scripts:
         nrnOptions.isScriptsCommand = true
         root = (packageJsonPath, nodeModulesPath)
