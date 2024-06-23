@@ -3,7 +3,15 @@
 Cross package manager scripts runner (and more). Why, if there is `ni` ? Switching node versions will require you to reinstall the `ni` every time and i forgor to do that.
 I tried [`nrr`](https://github.com/ryanccn/nrr), it's fast, cool and maintained, but it lacks some of core package manager features like `install`, `remove` or `add`.
 
-## benchmarks
+## Build
+
+You firstly need to go into `src` folder and have nim installed.
+
+```sh
+$ nim c -d:release --opt:speed --passC:-flto --passL:-flto --passC:-march=native --passL:-march=native --threads:off --out:../release/nrn nrn.nim
+```
+
+## Benchmarks
 
 Just for fun, i didn't expect to be on par with rust, using nim, but it's cool how high you can jump with this little language. I used decent sized package.json file
 from my [Keycap](https://github.com/logotip4ik/keycap) project and added `test` script with `nuxt help;exit 0`.
