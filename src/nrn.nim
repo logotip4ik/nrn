@@ -13,28 +13,27 @@ when isMainModule:
     run.printHelp()
     system.quit()
 
-  let walk = pkg.walkUpPackages()
-  var root: tuple[pkg: string, nm: string];
+  var root: tuple[packageJson: string, nodeModules: string];
   var scripts: Scripts;
 
   if nrnOptions.pmCommand == PmCommand.Run:
     var availableScripts: seq[string] = @[];
 
-    for packageJsonPath, nodeModulesPath in walk():
-      scripts = pkg.parseScriptsFromPackageJson(readFile(packageJsonPath))
+    for packages in walkUpPackages():
+      scripts = pkg.parseScriptsFromPackageJson(readFile(packages.packageJson))
 
       # TODO: in monorepo, this can cause issues, where some dependency is hoisted to the top node_modules.
       if nrnOptions.runCommand in scripts:
         nrnOptions.isScriptsCommand = true
-        root = (packageJsonPath, nodeModulesPath)
+        root = packages
         break
-      elif os.fileExists(fmt"{nodeModulesPath}/.bin/{nrnOptions.runCommand}"):
-        root = (packageJsonPath, nodeModulesPath)
+      elif os.fileExists(fmt"{packages.nodeModules}/.bin/{nrnOptions.runCommand}"):
+        root = packages
         break
       else:
         availableScripts = availableScripts.concat(scripts.keys().toSeq())
 
-    if root.pkg.len == 0:
+    if root.packageJson.len == 0:
       styledEcho styleDim, "command not found: ", resetStyle, styleBright, nrnOptions.runCommand, resetStyle
       let maybeScipts = availableScripts
         .mapIt((it, suggest.fuzzyMatch(it, nrnOptions.runCommand)))
@@ -48,13 +47,12 @@ when isMainModule:
 
       system.quit()
   else:
-    let next = walk()
-    root = (next.packageJson, next.nodeModules);
+    root = findClosestPackageJson();
 
   run.run(
     nrnOptions,
     scripts,
-    root.pkg,
-    fmt"{root.nm}/.bin"
+    root.packageJson,
+    fmt"{root.nodeModules}/.bin"
   )
 

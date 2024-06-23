@@ -1,4 +1,4 @@
-import std/[os, sequtils, strformat, tables]
+import std/[os, strformat, tables]
 import jsony
 
 type
@@ -6,17 +6,21 @@ type
   Package = object
     scripts: Scripts
 
-proc walkUpPackages*(checkNodeModules = false): iterator(): tuple[packageJson: string, nodeModules: string] =
-  return iterator(): tuple[packageJson: string, nodeModules: string] {.inline.} =
-    var path = os.getCurrentDir()
+proc findClosestPackageJson*(dir: string = os.getCurrentDir()): tuple[packageJson: string, nodeModules: string] =
+  if dir == "/":
+    return
 
-    for dir in path.parentDirs().toSeq():
-      if dir != "/":
-        let packageJson = fmt"{dir}/package.json"
-        let nodeModules = fmt"{dir}/node_modules"
+  for path in dir.parentDirs():
+    let packageJson = fmt"{dir}/package.json"
 
-        if os.fileExists(packageJson) and (not checkNodeModules or os.dirExists(nodeModules)):
-          yield (packageJson, nodeModules)
+    if os.fileExists(packageJson):
+      return (packageJson, fmt"{dir}/node_modules")
+
+iterator walkUpPackages*(): tuple[packageJson: string, nodeModules: string] =
+  var path = os.getCurrentDir()
+
+  for dir in path.parentDirs():
+    yield findClosestPackageJson(dir)
 
 proc parseScriptsFromPackageJson*(jsonString: string): Scripts =
   let package = jsonString.fromJson(Package)
