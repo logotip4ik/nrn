@@ -1,5 +1,5 @@
 import system
-import std/[os, tables, sequtils, algorithm, terminal]
+import std/[os, strformat, tables, sequtils, algorithm, terminal]
 
 import args
 import pkg
@@ -28,7 +28,7 @@ when isMainModule:
         nrnOptions.isScriptsCommand = true
         root = (packageJsonPath, nodeModulesPath)
         break
-      elif os.fileExists(nodeModulesPath & "/.bin/" & nrnOptions.runCommand):
+      elif os.fileExists(fmt"{nodeModulesPath}/.bin/{nrnOptions.runCommand}"):
         root = (packageJsonPath, nodeModulesPath)
         break
       else:
@@ -55,6 +55,6 @@ when isMainModule:
     nrnOptions,
     scripts,
     root.pkg,
-    root.nm & "/.bin"
+    fmt"{root.nm}/.bin"
   )
 

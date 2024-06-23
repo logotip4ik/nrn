@@ -1,21 +1,21 @@
-import std/[os, tables]
+import std/[os, sequtils, strformat, tables]
 import jsony
 
 type
-  Scripts* = TableRef[string, string]
-  Package = object of RootObj
+  Scripts* = Table[string, string]
+  Package = object
     scripts: Scripts
 
-proc walkUpPackages*(requireNodeModules = false): iterator(): tuple[packageJson: string, nodeModules: string] =
+proc walkUpPackages*(checkNodeModules = false): iterator(): tuple[packageJson: string, nodeModules: string] =
   return iterator(): tuple[packageJson: string, nodeModules: string] {.inline.} =
     var path = os.getCurrentDir()
 
-    for dir in path.parentDirs():
+    for dir in path.parentDirs().toSeq():
       if dir != "/":
-        let packageJson = dir & "/package.json"
-        let nodeModules = dir & "/node_modules"
+        let packageJson = fmt"{dir}/package.json"
+        let nodeModules = fmt"{dir}/node_modules"
 
-        if os.fileExists(packageJson) and (not requireNodeModules or os.dirExists(nodeModules)):
+        if os.fileExists(packageJson) and (not checkNodeModules or os.dirExists(nodeModules)):
           yield (packageJson, nodeModules)
 
 proc parseScriptsFromPackageJson*(jsonString: string): Scripts =

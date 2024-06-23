@@ -1,4 +1,4 @@
-import std/[parseopt, cmdline, sequtils, strutils, tables]
+import std/[parseopt, cmdline, sequtils, strutils, strformat, tables]
 
 type
   PmCommand* {.pure.} = enum
@@ -7,7 +7,7 @@ type
     Install = "install"
     Remove = "remove"
     Help = "help"
-  Options* = object of RootObj
+  Options* = object
     # rely on nim to set pmCommand to first value in PmCommand enum as default
     pmCommand*: PmCommand
     runCommand*: string
@@ -20,10 +20,9 @@ const pmCommandAliases = {
   "rm": PmCommand.Remove,
 }.toTable()
 
-const pmCommandsList = PmCommand.toSeq().mapIt($it)
-
 proc getOptions*(): Options =
   var argv = initOptParser(commandLineParams())
+  var pmCommands = PmCommand.toSeq().mapIt($it)
 
   var checkedPmCommand = false
   for kind, key, val in argv.getopt():
@@ -32,19 +31,19 @@ proc getOptions*(): Options =
         defer: checkedPmCommand = true
 
         if not checkedPmCommand:
-          if pmCommandsList.contains(key):
+          if pmCommands.contains(key):
             result.pmCommand = parseEnum[PmCommand](key)
           elif key in pmCommandAliases:
             result.pmCommand = pmCommandAliases[key]
           else:
             result.runCommand = key
         elif checkedPmCommand:
-          result.forwarded.add(" " & key)
+          result.forwarded.add(fmt" {key}")
 
       of CmdLineKind.cmdLongOption:
         if checkedPmCommand:
           result.forwarded.add(
-            if not val.isEmptyOrWhitespace(): " --" & key & "=" & val else: " --" & key
+            if not val.isEmptyOrWhitespace(): fmt" --{key}={val}" else: fmt" --{key}"
           )
         elif key == "help":
           result.pmCommand = PmCommand.Help
@@ -53,7 +52,7 @@ proc getOptions*(): Options =
       of CmdLineKind.cmdShortOption:
         if checkedPmCommand:
           result.forwarded.add(
-            if not val.isEmptyOrWhitespace(): " -" & key & "=" & val else: " -" & key
+            if not val.isEmptyOrWhitespace(): fmt" -{key}={val}" else: fmt" -{key}"
           )
         elif key == "h":
           result.pmCommand = PmCommand.Help
