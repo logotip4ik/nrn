@@ -6,7 +6,7 @@ type
   Package = object of RootObj
     scripts: Scripts
 
-proc walkUpPackages*(requireNodeModules= false): iterator(): tuple[packageJson: string, nodeModules: string] =
+proc walkUpPackages*(requireNodeModules = false): iterator(): tuple[packageJson: string, nodeModules: string] =
   return iterator(): tuple[packageJson: string, nodeModules: string] {.inline.} =
     var path = os.getCurrentDir()
 
