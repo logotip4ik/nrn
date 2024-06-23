@@ -5,10 +5,8 @@ I tried [`nrr`](https://github.com/ryanccn/nrr), it's fast, cool and maintained,
 
 ## Build
 
-You firstly need to go into `src` folder and have nim installed.
-
 ```sh
-$ nim c -d:release --opt:speed --passC:-flto --passL:-flto --passC:-march=native --passL:-march=native --threads:off --out:../release/nrn nrn.nim
+$ nim c ./src/nrn.nim
 ```
 
 ## Benchmarks
