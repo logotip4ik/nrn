@@ -13,29 +13,29 @@ $ nim c -d:release --opt:speed --passC:-flto --passL:-flto --passC:-march=native
 
 ## Benchmarks
 
-Just for fun, i didn't expect to be on par with rust, using nim, but it's cool how high you can jump with this little language. I used decent sized package.json file
-from my [Keycap](https://github.com/logotip4ik/keycap) project and added `test` script with `nuxt help;exit 0`.
+Just for fun, i didn't expect to be (nearly) on par with rust, using nim, but it's cool how high you can jump with this little language. I used decent sized package.json file
+from my [Keycap](https://github.com/logotip4ik/keycap) project and added `start` script with `node ./index.js` (where index.js is an empty file).
 
 
 <small>Mac M3 pro</small>
 
 ```sh
-$ hyperfine --warmup 5 'nrn test' 'nrr test' 'yarn test'
+$ hyperfine --shell=none --warmup=5 --output=pipe 'nrr start' 'nrn start' 'yarn start'
 
-Benchmark 1: nrn test
-  Time (mean ± σ):     199.2 ms ±   0.6 ms    [User: 185.1 ms, System: 22.5 ms]
-  Range (min … max):   198.5 ms … 200.3 ms    15 runs
+Benchmark 1: nrr start
+  Time (mean ± σ):      21.8 ms ±   0.3 ms    [User: 14.2 ms, System: 4.1 ms]
+  Range (min … max):    20.8 ms …  22.4 ms    137 runs
  
-Benchmark 2: ./nrr test
-  Time (mean ± σ):     139.6 ms ±   0.7 ms    [User: 138.1 ms, System: 14.5 ms]
-  Range (min … max):   138.3 ms … 140.8 ms    21 runs
+Benchmark 2: nrn start
+  Time (mean ± σ):      31.6 ms ±   0.5 ms    [User: 17.9 ms, System: 6.6 ms]
+  Range (min … max):    30.2 ms …  32.9 ms    95 runs
  
-Benchmark 3: yarn test
-  Time (mean ± σ):     493.5 ms ±   5.7 ms    [User: 513.1 ms, System: 47.7 ms]
-  Range (min … max):   483.3 ms … 504.6 ms    10 runs
+Benchmark 3: yarn start
+  Time (mean ± σ):     202.0 ms ±   3.2 ms    [User: 114.8 ms, System: 20.3 ms]
+  Range (min … max):   191.9 ms … 204.7 ms    14 runs
  
 Summary
-  ./nrr test ran
-    1.43 ± 0.01 times faster than nrn test
-    3.54 ± 0.04 times faster than yarn test
+  nrr start ran
+    1.45 ± 0.03 times faster than nrn start
+    9.29 ± 0.19 times faster than yarn start
 ```
