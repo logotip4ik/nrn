@@ -2,7 +2,7 @@ import std/[os, tables]
 import jsony
 
 type
-  Scripts* = Table[string, string]
+  Scripts* = TableRef[string, string]
   Package = object of RootObj
     scripts: Scripts
 
