@@ -14,16 +14,16 @@ type
     forwarded*: string
     isScriptsCommand*: bool
 
-const pmCommandAliases = {
-  "i": PmCommand.Install,
-  "r": PmCommand.Remove,
-  "rm": PmCommand.Remove,
-}.toTable()
 
 proc getOptions*(): Options =
-  var argv = initOptParser(commandLineParams())
-  var pmCommands = PmCommand.toSeq().mapIt($it)
+  let pmCommandsList = PmCommand.toSeq().mapIt($it)
+  let pmCommandAliases = {
+    "i": PmCommand.Install,
+    "r": PmCommand.Remove,
+    "rm": PmCommand.Remove,
+  }.toTable()
 
+  var argv = initOptParser(commandLineParams())
   var checkedPmCommand = false
   for kind, key, val in argv.getopt():
     case kind:
@@ -31,7 +31,7 @@ proc getOptions*(): Options =
         defer: checkedPmCommand = true
 
         if not checkedPmCommand:
-          if pmCommands.contains(key):
+          if pmCommandsList.contains(key):
             result.pmCommand = parseEnum[PmCommand](key)
           elif key in pmCommandAliases:
             result.pmCommand = pmCommandAliases[key]
