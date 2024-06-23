@@ -43,7 +43,7 @@ proc checkPm(root: string): PM =
 proc run*(
   options: args.Options,
   scripts: pkg.Scripts,
-  packageJsonPath,
+  packageJsonPath: string,
   binDirPath: string,
 ) =
   let packageJsonFile = paths.splitFile(Path(packageJsonPath))
