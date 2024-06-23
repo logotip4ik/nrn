@@ -1,5 +1,5 @@
 import system
-import std/[os, osproc, strtabs, tables, paths, strformat, exitprocs, strutils, terminal]
+import std/[os, osproc, strtabs, tables, paths, exitprocs, strutils, terminal]
 
 import args
 import pkg
@@ -27,13 +27,13 @@ proc exec(command: string, env: StringTableRef, workingDir: string) =
   discard waitForExit(process)
 
 proc checkPm(root: string): PM =
-  if os.fileExists(fmt"{root}/package-lock.json"):
+  if os.fileExists(root & "package-lock.json"):
     return PM.Npm
-  if os.fileExists(fmt"{root}/yarn.lock") or os.fileExists(fmt"{root}/.yarnrc") or os.fileExists(fmt"{root}/.yarnrc.yml"):
+  if os.fileExists(root & "yarn.lock") or os.fileExists(root & ".yarnrc") or os.fileExists(root & ".yarnrc.yml"):
     return PM.Yarn
-  if os.fileExists(fmt"{root}/pnpm-lock.yaml"):
+  if os.fileExists(root & "pnpm-lock.yaml"):
     return PM.Pnpm
-  if os.fileExists(fmt"{root}/bun.lockb") or os.fileExists(fmt"{root}/bunfig.toml"):
+  if os.fileExists(root & "bun.lockb") or os.fileExists(root & "bunfig.toml"):
     return PM.Yarn
 
   echo "Didn't found package manager, fallbacking to Npm"
@@ -54,7 +54,7 @@ proc run*(
 
   case options.pmCommand:
     of PmCommand.Run:
-      env["PATH"] = os.getEnv("PATH") & fmt":{binDirPath}"
+      env["PATH"] = os.getEnv("PATH") & ":" & binDirPath
       env["npm_package_json"] = packageJsonPath
       env["npm_execpath"] = getAppDir() & getAppFilename()
 
