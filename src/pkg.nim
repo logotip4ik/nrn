@@ -20,7 +20,10 @@ iterator walkUpPackages*(): tuple[packageJson: string, nodeModules: string] =
   var path = os.getCurrentDir()
 
   for dir in path.parentDirs():
-    yield findClosestPackageJson(dir)
+    let packages = findClosestPackageJson(dir)
+
+    if packages.packageJson.len > 0:
+      yield packages
 
 proc parseScriptsFromPackageJson*(jsonString: string): Scripts =
   let package = jsonString.fromJson(Package)
